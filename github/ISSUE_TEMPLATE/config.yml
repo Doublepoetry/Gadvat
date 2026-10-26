@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contributing guide
+    url: https://github.com/Doublepoetry/Gadvat/blob/main/CONTRIBUTING.md
+    about: How to add history, routes, maps and photos

@@ -1,0 +1,40 @@
+name: Suggest a route
+description: Share a trek route to a fort
+title: "[Route] "
+labels: [route]
+body:
+  - type: input
+    id: fort
+    attributes:
+      label: Fort
+      description: Name and ID if you know it (e.g. Raigad, F014)
+    validations:
+      required: true
+  - type: input
+    id: start
+    attributes:
+      label: Start / base village
+    validations:
+      required: true
+  - type: input
+    id: walked
+    attributes:
+      label: Last walked (month and year)
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options: [Easy, Moderate, Hard]
+  - type: input
+    id: time
+    attributes:
+      label: Time to the top
+  - type: textarea
+    id: route
+    attributes:
+      label: Route description
+      description: Landmarks, turns, water, hazards. Attach a GPX file if you have one.
+    validations:
+      required: true

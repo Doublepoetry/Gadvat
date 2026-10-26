@@ -1,0 +1,25 @@
+name: Fix fort details
+description: Report a wrong location, name, type or other detail
+title: "[Fix] "
+labels: [fix]
+body:
+  - type: input
+    id: fort
+    attributes:
+      label: Fort
+      description: Name and ID if you know it (e.g. Raigad, F014)
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What's wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What's correct?
+      description: For locations, give latitude, longitude (decimal) and how you verified it.
+    validations:
+      required: true
