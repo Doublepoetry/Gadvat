@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Archivo:wght@500;700;800&family=Mukta:wght@400;500;600;700&family=Tiro+Devanagari+Marathi&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E1B20;--ink:#F3EAD8;--acc:#F1D2A1;--mut:#9FB0B3;--ink2:#E6E0D2;--mut2:#7F9398;--acc2:#C9B48F;--bg2:#101F25;--land:#14303A;--landOn:#1C3F4B;--edge:#2F4C55;--card:#132830;--lab:#5C747A;--lab2:#6A8288;--ph:#6F8287;--spark:#FFF6E0;--lr:241,210,161;--glass:rgba(20,40,48,.94);--shadow:rgba(0,0,0,.85);--scrim:rgba(8,16,19,.72)}
+:root[data-theme=light]{--bg:#F4F0E6;--ink:#1B2A2E;--acc:#A4511C;--mut:#56676B;--ink2:#2A3A3E;--mut2:#66767A;--acc2:#8A6232;--bg2:#EDE6D6;--land:#FFFCF5;--landOn:#F6E7CC;--edge:#CFC3AC;--card:#FFFDF8;--lab:#9A8E78;--lab2:#8A7E68;--ph:#8A8F8C;--spark:;--lr:27,42,46;--glass:rgba(255,253,248,.96);--shadow:rgba(60,45,20,.18);--scrim:rgba(60,50,35,.28)}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'InterDisplay','Inter','Mukta',system-ui,sans-serif;font-weight:300;font-feature-settings:'ss01','cv11';-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:var(--acc);text-underline-offset:3px}
+a:hover{color:#FFFFFF}
+input,button{font-family:inherit;color:inherit}
+input::placeholder{color:var(--ph)}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(var(--lr),.14);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+@keyframes gvDrop{0%{transform:translateY(-70px);opacity:0}55%{opacity:1}75%{transform:translateY(4px)}100%{transform:none;opacity:1}}
+@keyframes gvLabel{from{opacity:0}to{opacity:1}}
+@keyframes gvTwinkle{0%,100%{opacity:.35}50%{opacity:1}}
+</style>
+</helmet>
+<div style="position:relative;height:100vh;height:100dvh;overflow:hidden;background:var(--bg)">
+
+  <div ref="{{ mapRef }}" style="position:absolute;inset:0">{{ mapEl }}</div>
+
+  <header style="position:absolute;top:0;left:0;right:0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:30;pointer-events:none">
+    <button onClick="{{ goHome }}" style="pointer-events:auto;display:flex;align-items:baseline;gap:10px;background:none;border:0;padding:6px 4px;cursor:pointer">
+      <span style="font-size:18px;font-weight:400;letter-spacing:-.01em;color:var(--ink)">Gadvat</span>
+      <span style="font-family:'Tiro Devanagari Marathi',serif;font-size:16.5px;color:var(--acc);display:{{ mrI }}">गडवाट</span>
+    </button>
+    <div style="pointer-events:auto;display:flex;align-items:center;gap:4px">
+      <button onClick="{{ toggleTheme }}" title="Light / dark" aria-label="Toggle light and dark" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:0;background:transparent;border-radius:999px;cursor:pointer;color:var(--ink2)" style-hover="background:rgba(var(--lr),.08)">
+        <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+        <sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+      </button>
+      <button onClick="{{ toggleMr }}" title="Show Marathi" style="display:flex;align-items:center;gap:10px;height:40px;padding:0 12px;border:0;background:transparent;border-radius:999px;cursor:pointer;color:var(--ink2);font-family:'Tiro Devanagari Marathi',serif;font-size:15px" style-hover="background:rgba(var(--lr),.08)">
+        <span>मराठी</span>
+        <span style="position:relative;display:block;width:30px;height:18px;border-radius:999px;background:{{ mrBtn.track }};transition:background .2s">
+          <span style="position:absolute;top:2px;left:{{ mrBtn.knob }}px;width:14px;height:14px;border-radius:50%;background:{{ mrBtn.dot }};transition:left .2s"></span>
+        </span>
+      </button>
+      <button onClick="{{ toggleList }}" style="height:40px;padding:0 14px;border:0;background:{{ fortsBtn.bg }};color:{{ fortsBtn.fg }};border-radius:999px;font-size:14px;font-weight:400;cursor:pointer;transition:background .2s">Forts</button>
+    </div>
+  </header>
+
+  <div style="{{ searchStyle }}">
+    <div style="display:flex;align-items:center;gap:12px;height:56px;padding:0 8px 0 20px;background:var(--glass);border:1px solid {{ searchBorder }};border-radius:999px;box-shadow:0 18px 40px -22px var(--shadow);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:border-color .2s">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="2" stroke-linecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <input ref="{{ searchRef }}" value="{{ q }}" onChange="{{ onQ }}" onFocus="{{ onFocusQ }}" onBlur="{{ onBlurQ }}" onKeyDown="{{ onKeyQ }}" placeholder="{{ searchPh }}" autocomplete="off" spellcheck="false" style="flex:1;min-width:0;height:100%;background:transparent;border:0;outline:none;font-size:16px;color:var(--ink)">
+      <sc-if value="{{ hasQ }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ clearQ }}" aria-label="Clear" style="flex:none;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:var(--mut);font-size:18px;cursor:pointer" style-hover="background:rgba(var(--lr),.08)">×</button>
+      </sc-if>
+    </div>
+    <sc-if value="{{ showResults }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:8px;padding:6px;background:var(--card);border:1px solid rgba(var(--lr),.14);border-radius:18px;box-shadow:0 24px 50px -24px var(--shadow);display:flex;flex-direction:column">
+        <sc-for list="{{ results }}" as="r" hint-placeholder-count="0">
+          <button onMouseDown="{{ r.pick }}" onMouseEnter="{{ r.enter }}" style="display:flex;align-items:center;gap:14px;padding:11px 14px;border:0;border-radius:12px;background:{{ r.bg }};text-align:left;cursor:pointer">
+            <span style="flex:none;width:14px;display:flex;justify-content:center"><span style="{{ r.glyph }}"></span></span>
+            <span style="flex:1;min-width:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+              <span style="font-size:15px;font-weight:400;color:var(--ink)">{{ r.en }}</span>
+              <span style="font-family:'Tiro Devanagari Marathi',serif;font-size:15px;color:var(--acc2);display:{{ mrI }}">{{ r.mr }}</span>
+            </span>
+            <span style="flex:none;font-size:12px;color:var(--mut2)">{{ r.sub }}</span>
+          </button>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:14px;font-size:14px;color:var(--mut)">No fort by that name. Try another spelling, or browse <button onMouseDown="{{ openListFromSearch }}" style="border:0;background:none;padding:0;color:var(--acc);font-size:14px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">all forts</button>.</div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+    <aside ref="{{ panelRef }}" style="{{ panelStyle }}">
+      <div style="position:relative;display:flex;flex-direction:column;color:#12392F">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;border-bottom:1px solid rgba(18,57,47,.2)">
+          <div style="padding:18px 16px 16px 22px;font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:17.5px;line-height:.95;letter-spacing:-.03em;text-transform:uppercase;white-space:nowrap;border-right:1px solid rgba(18,57,47,.2)">{{ s.typeL1 }} {{ s.typeL2 }}</div>
+          <div style="padding:18px 16px 16px;font-size:11.5px;line-height:1.35;letter-spacing:-.01em;border-right:1px solid rgba(18,57,47,.2);display:flex;flex-direction:column;gap:4px">
+            <span>{{ s.place }}</span>
+            <span style="font-family:'Mukta',sans-serif;font-size:13.5px;color:#3F5F55;display:{{ s.placeMrD }}">{{ s.placeMr }}</span>
+          </div>
+          <button onClick="{{ closeSel }}" aria-label="Close" style="width:56px;border:0;background:transparent;color:#12392F;font-size:23px;line-height:1;cursor:pointer" style-hover="background:rgba(18,57,47,.07)">×</button>
+        </div>
+
+        <div style="position:relative;padding:26px 22px 22px;border-bottom:1px solid rgba(18,57,47,.2);overflow:hidden">
+          <div style="position:absolute;left:33%;top:0;bottom:0;border-left:1px solid rgba(18,57,47,.12)"></div>
+          <div style="position:absolute;left:0;right:0;top:50%;border-top:1px solid rgba(18,57,47,.12)"></div>
+          <div style="position:relative;font-family:'InterDisplay','Inter',sans-serif;font-weight:400;letter-spacing:-.025em;line-height:.84;font-size:{{ s.fs }}px;text-wrap:balance">
+            <div>{{ s.l1 }}</div>
+            <sc-if value="{{ s.hasL2 }}" hint-placeholder-val="{{ true }}">
+              <div style="padding-left:{{ s.indent }}">{{ s.l2 }}</div>
+            </sc-if>
+          </div>
+          <div style="position:relative;margin-top:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+            <div style="min-width:0;font-family:'Mukta',sans-serif;font-weight:700;font-size:38px;line-height:1.1;letter-spacing:-.01em;color:#12392F">{{ s.mr }}</div>
+            <div style="flex:none;display:flex;align-items:baseline;gap:6px;padding:7px 10px 6px;background:#12392F;color:#F2C230;margin-bottom:6px">
+              <span style="font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:18px;letter-spacing:-.025em;line-height:1">{{ s.stickerBig }}</span>
+              <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;color:var(--acc)">{{ s.stickerSmall }}</span>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ s.hasAddr }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,32%);border-bottom:1px solid rgba(18,57,47,.2)">
+            <div style="min-width:0;padding:18px 18px 20px 22px;display:flex;flex-direction:column;gap:6px;border-right:1px solid rgba(18,57,47,.2);overflow-wrap:anywhere">
+              <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;color:#3F5F55">{{ s.addrLabel }}</div>
+              <div style="font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:23px;line-height:1.02;letter-spacing:-.025em">{{ s.base }}</div>
+              <div style="font-size:13px;line-height:1.45;letter-spacing:-.005em;text-wrap:pretty">{{ s.addrLine }}</div>
+            </div>
+            <a href="{{ s.dirUrl }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;justify-content:flex-end;gap:4px;padding:18px 16px 20px;min-width:0;color:#12392F;text-decoration:none;background:#F2C230" style-hover="background:#E9B71F">
+              <span style="font-size:10px;letter-spacing:.06em">get there ↘</span>
+              <span style="display:flex;align-items:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-label="Google Maps" style="flex:none"><path d="M12 2.5c-3.9 0-7 3-7 6.9 0 5.1 7 12.1 7 12.1s7-7 7-12.1c0-3.9-3.1-6.9-7-6.9z" fill="#12392F"></path><circle cx="12" cy="9.4" r="2.6" fill="#F2C230"></circle></svg><span style="font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:16px;letter-spacing:-.03em;line-height:1.05">Directions</span></span>
+              <span style="font-size:10px;letter-spacing:.06em;opacity:.75">on Google Maps</span>
+            </a>
+          </div>
+        </sc-if>
+        <sc-if value="{{ s.addrLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:18px 22px;border-bottom:1px solid rgba(18,57,47,.2);font-size:12px;color:#3F5F55">Finding the nearest village…</div>
+        </sc-if>
+
+        <sc-if value="{{ s.hasFacts }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-bottom:1px solid rgba(18,57,47,.2)">
+            <sc-for list="{{ s.facts }}" as="fa" hint-placeholder-count="2">
+              <div style="padding:16px 22px 18px;display:flex;flex-direction:column;gap:8px;box-shadow:1px 0 0 rgba(18,57,47,.2)">
+                <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;color:#3F5F55">{{ fa.label }}</div>
+                <div style="font-size:14px;line-height:1.38;letter-spacing:-.01em;text-wrap:pretty">{{ fa.val }}<span style="display:{{ fa.mrD }};font-family:'Mukta',sans-serif;color:#3F5F55"> · {{ fa.mr }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s.hasNotes }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative;padding:22px 22px 26px;border-bottom:1px solid rgba(18,57,47,.2)">
+            <span style="position:absolute;top:-5px;left:33%;width:9px;height:9px;margin-left:-4px;border:1.5px solid #12392F;background:#ECE5D4"></span>
+            <p style="margin:0;font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:19px;line-height:1.22;letter-spacing:-.025em;text-wrap:pretty">{{ s.notes }}</p>
+          </div>
+        </sc-if>
+
+        <div style="border-bottom:1px solid rgba(18,57,47,.2)">
+          <a href="{{ s.wiki }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:4px;padding:16px 22px;color:#12392F;text-decoration:none" style-hover="background:rgba(18,57,47,.06)">
+            <span style="font-size:10px;letter-spacing:.06em;color:#3F5F55">read the story ↘</span>
+            <span style="font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:16.5px;letter-spacing:-.03em">History of the Fort</span>
+          </a>
+        </div>
+
+        <sc-if value="{{ s.hasAccNote }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 22px;border-bottom:1px solid rgba(18,57,47,.2);font-size:12px;line-height:1.45;color:#3F5F55">
+            <span style="flex:none;width:9px;height:9px;margin-top:4px;border:1.5px dashed #12392F"></span>
+            <span>{{ s.accNote }}</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s.hasNear }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;padding:18px 0 6px">
+            <div style="padding:0 22px 8px;font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:14px;letter-spacing:-.02em;text-transform:uppercase">Nearby forts</div>
+            <sc-for list="{{ s.near }}" as="n" hint-placeholder-count="5">
+              <button onClick="{{ n.onClick }}" style="display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:11px 22px;border:0;border-top:1px solid rgba(18,57,47,.14);background:transparent;text-align:left;cursor:pointer;color:#12392F" style-hover="background:rgba(18,57,47,.06)">
+                <span style="font-family:'InterDisplay','Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;color:#3F5F55">{{ n.no }}</span>
+                <span style="min-width:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+                  <span style="font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:16px;letter-spacing:-.03em">{{ n.en }}</span>
+                  <span style="font-family:'Mukta',sans-serif;font-size:15px;color:#3F5F55;display:{{ mrI }}">{{ n.mr }}</span>
+                </span>
+                <span style="font-family:'InterDisplay','Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;color:#3F5F55">{{ n.km }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:18px 22px 22px;border-top:1px solid rgba(18,57,47,.2)">
+          <div style="font-family:'InterDisplay','Inter',sans-serif;font-weight:400;font-size:16.5px;letter-spacing:-.025em">Gadvat<span style="font-family:'Mukta',sans-serif;font-weight:700;letter-spacing:0;margin-left:6px;display:{{ mrI }}">गडवाट</span></div>
+          <sc-if value="{{ s.hasCoord }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;text-align:right">
+              <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;color:#3F5F55">Coordinates</span>
+              <span style="font-family:'InterDisplay','Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:13px;letter-spacing:-.01em;font-weight:400">{{ s.latS }}  ·  {{ s.lonS }}</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </aside>
+  </sc-if>
+
+  <sc-if value="{{ listOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeList }}" style="position:absolute;inset:0;z-index:40;background:var(--scrim);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;justify-content:center;padding:{{ listPad }}">
+      <div onClick="{{ stop }}" style="width:100%;max-width:820px;display:flex;flex-direction:column;background:var(--bg2);border:1px solid rgba(var(--lr),.12);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.9)">
+        <div style="padding:22px 24px 16px;display:flex;flex-direction:column;gap:16px;border-bottom:1px solid rgba(var(--lr),.10)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+              <span style="font-size:20px;font-weight:400">All forts</span>
+              <span style="font-family:'Tiro Devanagari Marathi',serif;font-size:17.5px;color:var(--acc2);display:{{ mrI }}">सर्व किल्ले</span>
+              <span style="font-size:13px;color:var(--mut2)">{{ listCount }}</span>
+            </div>
+            <button onClick="{{ closeList }}" aria-label="Close" style="flex:none;width:36px;height:36px;border:0;border-radius:50%;background:rgba(var(--lr),.08);color:var(--ink2);font-size:18px;cursor:pointer">×</button>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <input value="{{ listQ }}" onChange="{{ onListQ }}" placeholder="Filter by name or district" style="flex:1 1 220px;min-width:0;height:42px;padding:0 16px;border-radius:999px;border:1px solid rgba(var(--lr),.16);background:var(--bg);font-size:14px;outline:none">
+            <div style="display:flex;gap:4px;flex-wrap:wrap">
+              <sc-for list="{{ typeChips }}" as="c" hint-placeholder-count="5">
+                <button onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:7px;height:36px;padding:0 12px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};font-size:12px;font-weight:400;cursor:pointer">{{ c.label }}<span style="opacity:.6">{{ c.n }}</span></button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:4px 12px 20px;overscroll-behavior:contain">
+          <sc-for list="{{ rows }}" as="row" hint-placeholder-count="10">
+            <sc-if value="{{ row.hasLetter }}" hint-placeholder-val="{{ false }}">
+              <div style="position:sticky;top:0;background:var(--bg2);padding:16px 12px 6px;font-size:11px;letter-spacing:.14em;color:var(--acc2);font-weight:400">{{ row.letter }}</div>
+            </sc-if>
+            <button onClick="{{ row.onClick }}" style="width:100%;display:grid;grid-template-columns:{{ listCols }};gap:14px;align-items:center;padding:11px 12px;border:0;border-radius:10px;background:transparent;text-align:left;cursor:pointer" style-hover="background:rgba(var(--lr),.07)">
+              <span style="display:flex;align-items:center;gap:12px;min-width:0">
+                <span style="flex:none;width:14px;display:flex;justify-content:center"><span style="{{ row.glyph }}"></span></span>
+                <span style="min-width:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+                  <span style="font-size:14px;color:var(--ink)">{{ row.en }}</span>
+                  <span style="font-family:'Tiro Devanagari Marathi',serif;font-size:14px;color:var(--mut);display:{{ mrI }}">{{ row.mr }}</span>
+                </span>
+              </span>
+              <span style="font-size:13px;color:var(--mut);min-width:0;overflow:hidden;text-overflow:ellipsis">{{ row.district }}</span>
+              <span style="font-size:13px;color:var(--mut2);display:{{ typeColD }}">{{ row.type }}</span>
+            </button>
+          </sc-for>
+          <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:32px 12px;color:var(--mut);font-size:14px">No forts match that filter.</div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;zoom&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:7,&quot;min&quot;:3,&quot;max&quot;:14,&quot;step&quot;:0.5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Map&quot;},&quot;flightMs&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1100,&quot;min&quot;:500,&quot;max&quot;:2400,&quot;step&quot;:100,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Map&quot;},&quot;districtLabels&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Map&quot;}}">
+const MRD = '०१२३४५६७८९';
+const mrn = n => String(n).replace(/[0-9]/g, d => MRD[+d]);
+const REG = { 'Konkan': 'कोकण', 'Western Maharashtra': 'पश्चिम महाराष्ट्र', 'North Maharashtra': 'उत्तर महाराष्ट्र', 'Marathwada': 'मराठवाडा', 'Vidarbha': 'विदर्भ' };
+const DIST = { Ahilyanagar: 'अहिल्यानगर', Akola: 'अकोला', Amravati: 'अमरावती', Beed: 'बीड', Bhandara: 'भंडारा', Buldhana: 'बुलढाणा', Chandrapur: 'चंद्रपूर', 'Chhatrapati Sambhajinagar': 'छत्रपती संभाजीनगर', Dharashiv: 'धाराशिव', Dhule: 'धुळे', Gadchiroli: 'गडचिरोली', Gondia: 'गोंदिया', Hingoli: 'हिंगोली', Jalgaon: 'जळगाव', Jalna: 'जालना', Kolhapur: 'कोल्हापूर', Latur: 'लातूर', Mumbai: 'मुंबई', Nagpur: 'नागपूर', Nanded: 'नांदेड', Nandurbar: 'नंदुरबार', Nashik: 'नाशिक', Palghar: 'पालघर', Parbhani: 'परभणी', Pune: 'पुणे', Raigad: 'रायगड', Ratnagiri: 'रत्नागिरी', Sangli: 'सांगली', Satara: 'सातारा', Sindhudurg: 'सिंधुदुर्ग', Solapur: 'सोलापूर', Thane: 'ठाणे', Wardha: 'वर्धा', Washim: 'वाशिम', Yavatmal: 'यवतमाळ', 'North Goa (Goa)': 'उत्तर गोवा' };
+const TYPES = {
+  Hill: { en: 'Hill fort', mr: 'गिरिदुर्ग', c: 'var(--acc)' },
+  Sea: { en: 'Sea fort', mr: 'जलदुर्ग', c: '#7CC6D6' },
+  Coastal: { en: 'Coastal fort', mr: 'सागरी किनारा', c: '#B2BD47' },
+  Land: { en: 'Land fort', mr: 'भुईकोट', c: '#E2704F' }
+};
+const GLYPH = {
+  Hill: 'display:block;width:12px;height:10px;background:var(--acc);clip-path:polygon(50% 0,100% 100%,0 100%)',
+  Sea: 'display:block;width:10px;height:10px;border-radius:50%;background:#7CC6D6',
+  Coastal: 'display:block;width:8px;height:8px;background:#B2BD47;transform:rotate(45deg)',
+  Land: 'display:block;width:9px;height:9px;background:#E2704F;border-radius:2px'
+};
+const ACC = {
+  approx: 'The pin is near the fort, but the exact spot hasn’t been confirmed.',
+  rough: 'Rough placement — the fort may be some distance from the pin.',
+  none: 'This fort isn’t on the map yet.'
+};
+const VBW = 977, VBH = 816;
+const THEME_D = {"bg":"#0E1B20","ink":"#F3EAD8","acc":"#F1D2A1","mut":"#9FB0B3","ink2":"#E6E0D2","mut2":"#7F9398","acc2":"#C9B48F","bg2":"#101F25","land":"#14303A","landOn":"#1C3F4B","edge":"#2F4C55","card":"#132830","lab":"#5C747A","lab2":"#6A8288","ph":"#6F8287","spark":"#FFF6E0","lr":"241,210,161","glass":"rgba(20,40,48,.94)"}, THEME_L = {"bg":"#F4F0E6","ink":"#1B2A2E","acc":"#A4511C","mut":"#56676B","ink2":"#2A3A3E","mut2":"#66767A","acc2":"#8A6232","bg2":"#EDE6D6","land":"#FFFCF5","landOn":"#F6E7CC","edge":"#CFC3AC","card":"#FFFDF8","lab":"#9A8E78","lab2":"#8A7E68","ph":"#8A8F8C","spark":"","lr":"27,42,46","glass":"rgba(255,253,248,.96)","shadow":"rgba(60,45,20,.18)","scrim":"rgba(60,50,35,.28)"};
+const h = React.createElement;
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const km = (a, b) => { const r = x => x * Math.PI / 180; const dLa = r(b[0] - a[0]), dLo = r(b[1] - a[1]); const s = Math.sin(dLa / 2) ** 2 + Math.cos(r(a[0])) * Math.cos(r(b[0])) * Math.sin(dLo / 2) ** 2; return 12742 * Math.asin(Math.sqrt(s)); };
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+class Component extends DCLogic {
+  state = { forts: [], geo: null, W: window.innerWidth, H: window.innerHeight, vb: null, sel: null, panelIn: false, q: '', open: false, act: 0, list: false, listQ: '', listType: '', dragging: false,
+    showMr: (() => { try { return localStorage.getItem('gadvat:showMr') !== '0'; } catch (e) { return true; } })(),
+    theme: (() => { try { return localStorage.getItem('gadvat:theme') || 'dark'; } catch (e) { return 'dark'; } })(),
+    showAll: (() => { try { return localStorage.getItem('gadvat:showAll') === '1'; } catch (e) { return false; } })() };
+
+  componentDidUpdate() { document.documentElement.dataset.theme = this.state.theme; }
+  componentDidMount() {
+    document.documentElement.dataset.theme = this.state.theme;
+    Promise.all([fetch('data/forts.json').then(r => r.json()), fetch('data/districts.json').then(r => r.json()), fetch('data/addresses.json').then(r => r.json()).catch(() => ({}))]).then(([forts, geo, addr]) => {
+      this.setState({ forts, geo, addr }, () => { this.measure(); if (this.state.W > 0 && this.state.H > 0 && !this.state.vb) this.setState({ vb: this.idleView() }); });
+    });
+    this.onResize = () => this.measure();
+    window.addEventListener('resize', this.onResize);
+    document.addEventListener('visibilitychange', this.onResize);
+    this.onKey = e => {
+      const typing = /INPUT|TEXTAREA/.test((document.activeElement || {}).tagName || '');
+      if (e.key === 'Escape') {
+        if (this.state.list) this.setState({ list: false });
+        else if (this.state.open) { this.setState({ open: false }); document.activeElement && document.activeElement.blur(); }
+        else if (this.state.sel) this.closeSel();
+        return;
+      }
+      if (!typing && e.key === '/') { e.preventDefault(); this.searchEl && this.searchEl.focus(); }
+    };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { clearTimeout(this.mT); document.removeEventListener('visibilitychange', this.onResize); this.ro && this.ro.disconnect(); this.stopAnim(); window.removeEventListener('resize', this.onResize); window.removeEventListener('keydown', this.onKey); if (this.mapBox) this.mapBox.removeEventListener('wheel', this.onWheel); }
+
+  mob() { return this.state.W < 760; }
+  fit() { return Math.min(this.state.W / VBW, this.state.H / VBH); }
+  searchTop() { const { H } = this.state; return this.mob() ? Math.max(92, H * 0.2) : Math.max(110, H * 0.26); }
+  panelW() { return Math.min(540, Math.max(380, this.state.W * 0.4)); }
+  idleView() {
+    const { W, H } = this.state, mob = this.mob();
+    const top = this.searchTop() + 56 + 44, availH = Math.max(160, H - top - 48);
+    const s = Math.min((mob ? W - 40 : Math.min(540, W * 0.5)) / VBW, availH / VBH);
+    return { x: -((W - VBW * s) / 2) / s, y: -top / s, w: W / s };
+  }
+  proj(f) {
+    const g = this.state.geo; if (!g || !f) return null;
+    const lat = parseFloat(f.latitude), lon = parseFloat(f.longitude);
+    if (!isFinite(lat) || !isFinite(lon)) return null;
+    return { x: g.proj.ax * lon + g.proj.bx, y: g.proj.ay * lat + g.proj.by };
+  }
+  visRect() {
+    const { W, H } = this.state;
+    return this.mob() ? { x0: 0, x1: W, y0: 124, y1: H * 0.42 } : { x0: 0, x1: W - this.panelW() - 24, y0: 72, y1: H };
+  }
+  target() {
+    const S = this.state; if (!S.sel) return this.idleView();
+    const f = S.forts.find(x => x.id === S.sel), p = this.proj(f), R = this.visRect();
+    const fitR = Math.min((R.x1 - R.x0) / VBW, (R.y1 - R.y0) / VBH);
+    const s2 = p ? fitR * (this.props.zoom ?? 7) : fitR * 0.92;
+    const c = p || { x: VBW / 2, y: VBH / 2 };
+    return { x: c.x - ((R.x0 + R.x1) / 2) / s2, y: c.y - ((R.y0 + R.y1) / 2) / s2, w: S.W / s2 };
+  }
+  stopAnim() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = null; }
+  flyTo(to) {
+    const from = this.state.vb; if (!from) { this.setState({ vb: to }); return; }
+    this.stopAnim();
+    const r = this.state.H / this.state.W, dur = this.props.flightMs ?? 1100;
+    const c0 = { x: from.x + from.w / 2, y: from.y + from.w * r / 2 }, c1 = { x: to.x + to.w / 2, y: to.y + to.w * r / 2 };
+    const bump = Math.min(1.6, Math.hypot(c1.x - c0.x, c1.y - c0.y) / Math.max(from.w, to.w)) * 0.9;
+    const t0 = performance.now();
+    const step = () => {
+      const p = Math.min(1, (performance.now() - t0) / dur), e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+      const w = Math.exp(Math.log(from.w) + (Math.log(to.w) - Math.log(from.w)) * e) * (1 + bump * Math.sin(Math.PI * e));
+      const cx = c0.x + (c1.x - c0.x) * e, cy = c0.y + (c1.y - c0.y) * e;
+      this.setState({ vb: p >= 1 ? to : { x: cx - w / 2, y: cy - w * r / 2, w } });
+      this.raf = p < 1 ? requestAnimationFrame(step) : null;
+    };
+    this.raf = requestAnimationFrame(step);
+  }
+
+  measure() {
+    const el = this.mapBox; if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) { clearTimeout(this.mT); this.mT = setTimeout(() => this.measure(), 250); return; }
+    if (Math.abs(r.width - this.state.W) < 1 && Math.abs(r.height - this.state.H) < 1 && this.state.vb) return;
+    this.setState({ W: r.width, H: r.height }, () => { if (!this.state.geo) return; this.stopAnim(); this.setState({ vb: this.target() }); });
+  }
+  mapRef = el => {
+    if (el === this.mapBox) return;
+    if (this.mapBox) this.mapBox.removeEventListener('wheel', this.onWheel);
+    this.ro && this.ro.disconnect();
+    this.mapBox = el;
+    if (el) { el.addEventListener('wheel', this.onWheel, { passive: false }); this.ro = new ResizeObserver(() => this.measure()); this.ro.observe(el); this.measure(); }
+  };
+  searchRef = el => { this.searchEl = el; };
+  panelRef = el => { this.panelEl = el; };
+  onWheel = e => {
+    if (!this.state.sel) return;
+    e.preventDefault(); this.stopAnim();
+    const { vb, W, H } = this.state, d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    const nw = clamp(vb.w * Math.exp(d * (e.ctrlKey ? 0.01 : 0.0018)), VBW / 60, VBW * 3);
+    const ux = vb.x + e.clientX / W * vb.w, uy = vb.y + e.clientY / H * (vb.w * H / W);
+    this.setState({ vb: { x: ux - e.clientX / W * nw, y: uy - e.clientY / H * (nw * H / W), w: nw } });
+  };
+  onDown = e => { this.stopAnim(); try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {} this.drag = { x: e.clientX, y: e.clientY, vb: this.state.vb }; };
+  onMove = e => {
+    const D = this.drag; if (!D) return;
+    const k = D.vb.w / this.state.W;
+    this.setState({ dragging: true, vb: { ...D.vb, x: D.vb.x - (e.clientX - D.x) * k, y: D.vb.y - (e.clientY - D.y) * k } });
+  };
+  onUp = () => { this.drag = null; if (this.state.dragging) this.setState({ dragging: false }); };
+
+  select(id) {
+    const wasOpen = !!this.state.sel && this.state.panelIn;
+    const f = this.state.forts.find(x => x.id === id);
+    this.searchEl && this.searchEl.blur();
+    this.setState({ sel: id, q: f ? f.name : '', open: false, list: false, panelIn: wasOpen }, () => {
+      this.flyTo(this.target());
+      if (this.panelEl) this.panelEl.scrollTop = 0;
+      this.lookupAddr(f);
+      if (!wasOpen) requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ panelIn: true })));
+    });
+  }
+  lookupAddr(f) {
+    const p = this.proj(f); if (!p || (this.state.addr || {})[f.id] || (this.pending || {})[f.id]) return;
+    this.pending = { ...(this.pending || {}), [f.id]: true }; this.forceUpdate();
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${f.latitude}&lon=${f.longitude}&zoom=16&addressdetails=1&accept-language=en`)
+      .then(r => r.ok ? r.json() : null).then(j => { if (j && j.address) this.setState(s => ({ addr: { ...(s.addr || {}), [f.id]: j.address } })); })
+      .catch(() => {}).finally(() => { delete this.pending[f.id]; this.forceUpdate(); });
+  }
+  formatAddr(f, a) {
+    if (!a) return null;
+    const base = a.hamlet || a.village || a.isolated_dwelling || a.town || a.suburb || a.neighbourhood || a.city;
+    if (!base) return null;
+    const parent = a.hamlet && a.village && a.village !== base ? a.village : ((a.suburb || a.neighbourhood) === base ? (a.town || a.city) : '');
+    const taluka = a.county ? a.county.replace(/\s*Subdistrict$/i, ' Taluka').replace(/\s*Tahsil$/i, ' Taluka') : '';
+    const dist = (a.state_district || '').replace(/\s*District$/i, '') || f.district;
+    const parts = [parent, taluka, dist ? dist + ' District' : '', 'Maharashtra'].filter(Boolean);
+    const line = parts.join(', ') + (a.postcode ? ' ' + a.postcode : '');
+    return { base, line, query: [base, taluka, dist, 'Maharashtra'].filter(Boolean).join(', ') };
+  }
+  closeSel = () => {
+    this.setState({ panelIn: false, q: '', open: false });
+    this.flyTo(this.idleView());
+    clearTimeout(this.closeT);
+    this.closeT = setTimeout(() => { if (!this.state.panelIn) this.setState({ sel: null }); }, 420);
+  };
+
+  results() {
+    const q = this.state.q.trim(); if (!q) return [];
+    const nq = norm(q);
+    return this.state.forts.map(f => {
+      const n = norm(f.name);
+      const sc = n.startsWith(nq) ? 0 : (' ' + n).includes(' ' + nq) ? 1 : (f.name_marathi || '').includes(q) ? 1 : n.includes(nq) ? 2 : -1;
+      return { f, sc };
+    }).filter(x => x.sc >= 0).sort((a, b) => a.sc - b.sc || a.f.name.localeCompare(b.f.name)).slice(0, 8).map(x => x.f);
+  }
+
+  buildMap() {
+    const S = this.state, { vb, geo, W, H } = S; const C = S.theme === 'light' ? THEME_L : THEME_D; if (!vb || !geo || !(W > 0) || !(H > 0) || !(vb.w > 0)) return null;
+    const s = W / vb.w, u = 1 / s, vh = vb.w * H / W, zr = s / this.fit();
+    const labOp = (this.props.districtLabels ?? true) ? clamp((zr - 1.6) / 1.4, 0, 1) : 0;
+    const selF = S.sel && S.forts.find(f => f.id === S.sel), p = this.proj(selF);
+    const kids = [
+      h('g', { key: 'edge' }, geo.districts.map(d => h('path', { key: d.name, d: d.d, fill: C.land, stroke: 'rgba('+C.lr+',.32)', strokeWidth: 2.4 * u, strokeLinejoin: 'round' }))),
+      h('g', { key: 'fill' }, geo.districts.map(d => {
+        const on = selF && d.name.replace(/-/g, ' ') === selF.district;
+        return h('path', { key: d.name, d: d.d, fill: on ? C.landOn : C.land, stroke: `rgba(${C.lr},${on ? 0.32 : 0.1})`, strokeWidth: 0.8 * u, strokeLinejoin: 'round', style: { transition: 'fill .5s' } });
+      }))
+    ];
+    if (labOp > 0) {
+      kids.push(h('g', { key: 'lab', opacity: labOp, style: { pointerEvents: 'none' } },
+        h('text', { x: 36, y: 640, fontSize: 10 * u, letterSpacing: 6 * u, fontFamily: 'Instrument Sans', fontWeight: 500, fill: C.edge }, 'ARABIAN SEA'),
+        S.showMr ? h('text', { x: 36, y: 640 + 18 * u, fontSize: 14 * u, fontFamily: 'Tiro Devanagari Marathi', fill: C.edge }, 'अरबी समुद्र') : null,
+        geo.labels.map(l => {
+          const nm = l.name.replace('Chh. ', 'Chhatrapati '), mr = DIST[nm] || DIST[l.name];
+          return h('g', { key: l.name },
+            h('text', { x: l.x, y: l.y, textAnchor: 'middle', fontSize: 10 * u, letterSpacing: 1.6 * u, fontFamily: 'Instrument Sans', fontWeight: 500, fill: C.lab }, l.name.toUpperCase()),
+            S.showMr && mr ? h('text', { x: l.x, y: l.y + 15 * u, textAnchor: 'middle', fontSize: 13 * u, fontFamily: 'Tiro Devanagari Marathi', fill: C.lab2 }, mr) : null);
+        })));
+    }
+    {
+      kids.push(h('g', { key: 'all', style: { pointerEvents: 'none' } }, S.forts.map((f, i) => {
+        const q = this.proj(f); if (!q || (selF && f.id === selF.id)) return null;
+        const c = (TYPES[f.type] || TYPES.Hill).c, d = ((i * 37) % 100) / 100 * 3.2, dur = 2.2 + ((i * 53) % 100) / 100 * 2;
+        return h('g', { key: f.id, transform: `translate(${q.x} ${q.y}) scale(${u})`, style: { animation: `gvTwinkle ${dur}s ease-in-out ${-d}s infinite` } },
+          h('circle', { r: 4, fill: c, opacity: C.spark ? 0.18 : 0.22 }),
+          h('circle', { r: C.spark ? 1.6 : 1.9, fill: C.spark || c, stroke: C.spark ? 'none' : '#FFFCF5', strokeWidth: 0.6 }));
+      })));
+    }
+    if (p) {
+      const T = TYPES[selF.type] || TYPES.Hill;
+      kids.push(h('g', { key: 'pin-' + selF.id, transform: `translate(${p.x} ${p.y}) scale(${u})`, style: { pointerEvents: 'none' } },
+        h('ellipse', { rx: 7, ry: 2.6, fill: 'rgba(0,0,0,.55)' }),
+        h('circle', { r: 8, fill: 'none', stroke: T.c, strokeWidth: 1.5 },
+          h('animate', { attributeName: 'r', values: '6;34', dur: '2.4s', begin: '1s', repeatCount: 'indefinite' }),
+          h('animate', { attributeName: 'opacity', values: '0.8;0', dur: '2.4s', begin: '1s', repeatCount: 'indefinite' })),
+        h('g', { style: { animation: `gvDrop .6s cubic-bezier(.3,1.2,.5,1) ${S.panelIn ? '.85s' : '.95s'} both` } },
+          h('path', { d: 'M0 0C-3 -9 -13 -15 -13 -27A13 13 0 1 1 13 -27C13 -15 3 -9 0 0Z', fill: T.c, stroke: C.bg, strokeWidth: 1.5 }),
+          h('circle', { cy: -27, r: 5, fill: C.bg })),
+        h('text', { x: 20, y: -22, fontSize: 15, fontWeight: 600, fontFamily: 'Instrument Sans', fill: C.ink, stroke: C.bg, strokeWidth: 4, paintOrder: 'stroke', strokeLinejoin: 'round', style: { animation: 'gvLabel .4s ease 1.4s both' } }, selF.name),
+        S.showMr ? h('text', { x: 20, y: -4, fontSize: 15, fontFamily: 'Tiro Devanagari Marathi', fill: C.acc2, stroke: C.bg, strokeWidth: 4, paintOrder: 'stroke', strokeLinejoin: 'round', style: { animation: 'gvLabel .4s ease 1.5s both' } }, selF.name_marathi) : null));
+    }
+    const live = !!S.sel;
+    return h('svg', { viewBox: `${vb.x} ${vb.y} ${vb.w} ${vh}`, width: '100%', height: '100%', preserveAspectRatio: 'none',
+      style: { display: 'block', touchAction: 'none', userSelect: 'none', pointerEvents: live ? 'auto' : 'none', cursor: S.dragging ? 'grabbing' : 'grab' },
+      onPointerDown: live ? this.onDown : undefined, onPointerMove: this.onMove, onPointerUp: this.onUp, onPointerCancel: this.onUp }, kids);
+  }
+
+  renderVals() {
+    const S = this.state, { forts, W, H } = S, mob = this.mob(), set = o => this.setState(o);
+    const mrI = S.showMr ? 'inline' : 'none';
+    const selF = S.sel ? forts.find(f => f.id === S.sel) : null;
+    const focused = !!S.sel;
+
+    const res = S.open ? this.results() : [];
+    const act = clamp(S.act, 0, Math.max(0, res.length - 1));
+    const results = res.map((f, i) => ({ en: f.name, mr: f.name_marathi, sub: f.district || '', glyph: GLYPH[f.type] || GLYPH.Hill, bg: i === act ? 'rgba(var(--lr),.09)' : 'transparent',
+      pick: e => { e.preventDefault(); this.select(f.id); }, enter: () => { if (S.act !== i) set({ act: i }); } }));
+    const searchW = !(W > 0) ? 'min(580px, calc(100% - 48px))' : mob ? W - 24 : focused ? Math.max(240, Math.min(420, W - 480)) : Math.min(580, W - 48);
+    const searchStyle = { position: 'absolute', zIndex: 35, left: '50%', transform: 'translateX(-50%)', width: searchW, top: focused ? (mob ? 60 : 4) : this.searchTop(), transition: 'top .7s cubic-bezier(.2,.8,.2,1), width .7s cubic-bezier(.2,.8,.2,1)' };
+
+    let s = {};
+    if (selF) {
+      const f = selF, T = TYPES[f.type] || TYPES.Hill, p = this.proj(f), lat = parseFloat(f.latitude), lon = parseFloat(f.longitude);
+      const facts = [];
+      if (f.elevation_m) facts.push({ label: 'Elevation', val: `${f.elevation_m} m`, mr: `${mrn(f.elevation_m)} मी.` });
+      if (f.built_by_or_era) facts.push({ label: 'Built by / era', val: f.built_by_or_era });
+      if (f.associated_with) facts.push({ label: 'Associated with', val: f.associated_with });
+      facts.forEach(x => x.mrD = S.showMr && x.mr ? 'inline' : 'none');
+      const near = p ? forts.filter(o => o.id !== f.id && this.proj(o)).map(o => ({ o, d: km([lat, lon], [parseFloat(o.latitude), parseFloat(o.longitude)]) })).sort((a, b) => a.d - b.d).slice(0, 5) : [];
+      const acc = p ? f.location_accuracy : 'none';
+      const AD = p ? this.formatAddr(f, (S.addr || {})[f.id]) : null;
+      const words = f.name.split(' ');
+      const l1 = words.length > 1 ? words.slice(0, -1).join(' ') : f.name, l2 = words.length > 1 ? words[words.length - 1] : '';
+      const inner = (mob ? W : this.panelW()) - 44, ind = 0.2;
+      const fs = Math.round(0.85 * Math.max(40, Math.min(116, inner / (Math.max(...l1.split(' ').map(w => w.length), 3) * 0.6), l2 ? inner * (1 - ind) / (l2.length * 0.6) : 999)));
+      const l1Lines = Math.ceil((l1.length * fs * 0.6) / inner);
+      s = {
+        en: f.name, mr: f.name_marathi || f.name, l1, l2, hasL2: !!l2, fs, indent: (ind * 100) + '%',
+        typeL1: T.en.split(' ')[0], typeL2: 'Fort',
+        stickerTop: Math.round(26 + fs * 0.84 * l1Lines - 48), stickerBig: f.elevation_m ? Number(f.elevation_m).toLocaleString('en-IN') : (S.showMr ? T.mr : T.en.split(' ')[0]), stickerFs: f.elevation_m ? (String(f.elevation_m).length > 3 ? 24 : 28) : 17, stickerSmall: f.elevation_m ? 'metres' : 'fort',
+        place: [f.district ? f.district + ' district' : '', f.region].filter(Boolean).join(', ') + '.',
+        placeMr: [DIST[f.district], REG[f.region]].filter(Boolean).join(', '), placeMrD: S.showMr && (DIST[f.district] || REG[f.region]) ? 'block' : 'none',
+        facts: facts.filter(x => x.label !== 'Elevation'), hasFacts: facts.some(x => x.label !== 'Elevation'), hasNotes: !!f.notes, notes: f.notes,
+        hasAccNote: !!ACC[acc] && !AD, accNote: ACC[acc] || '',
+        hasAddr: !!AD, addrLoading: !AD && !!(this.pending || {})[f.id],
+        addrLabel: acc === 'close' ? 'Location' : 'Location · approx.',
+        base: AD ? AD.base : '', baseShort: AD ? (AD.base.length > 14 ? AD.base.split(' ')[0] : AD.base) : '', addrLine: AD ? AD.line : '',
+        addrNote: acc === 'close' ? 'Closest settlement to the fort, from OpenStreetMap. Most treks start here.' : 'The fort’s pin is approximate, so the trek may start from a different village.',
+        dirUrl: f.google_maps || (p ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.name + ' fort Maharashtra')}`),
+        gmaps: f.google_maps || (p ? `https://www.google.com/maps/search/?api=1&query=${lat},${lon}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.name + ' Maharashtra')}`),
+        wiki: f.wikipedia_search || `https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(f.name)}`,
+        hasCoord: !!p, latS: p ? `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}` : '', lonS: p ? `${Math.abs(lon).toFixed(4)}° ${lon >= 0 ? 'E' : 'W'}` : '',
+        hasNear: near.length > 0,
+        near: near.map(({ o, d }, i) => ({ no: '0' + (i + 1), en: o.name, mr: o.name_marathi, km: d < 10 ? d.toFixed(1) + ' km' : Math.round(d) + ' km', onClick: () => this.select(o.id) }))
+      };
+
+    }
+    const panelStyle = mob
+      ? { position: 'absolute', left: 0, right: 0, bottom: 0, height: '58%', overflowY: 'auto', zIndex: 32, background: '#ECE5D4', borderRadius: '6px 6px 0 0', boxShadow: '0 -24px 60px -20px rgba(0,0,0,.8)', transform: S.panelIn ? 'none' : 'translateY(100%)', transition: 'transform .45s cubic-bezier(.2,.8,.2,1)', overscrollBehavior: 'contain' }
+      : { position: 'absolute', top: 76, right: 20, bottom: 20, width: this.panelW(), overflowY: 'auto', zIndex: 32, background: '#ECE5D4', borderRadius: 6, boxShadow: '0 24px 60px -24px rgba(0,0,0,.8)', transform: S.panelIn ? 'none' : `translateX(${this.panelW() + 40}px)`, transition: 'transform .5s cubic-bezier(.2,.8,.2,1) .15s', overscrollBehavior: 'contain' };
+
+    let rows = [], typeChips = [], listCount = '';
+    if (S.list) {
+      const lq = norm(S.listQ.trim());
+      const base = forts.filter(f => !lq || norm(f.name).includes(lq) || norm(f.district).includes(lq) || (f.name_marathi || '').includes(S.listQ.trim()));
+      const list = base.filter(f => !S.listType || f.type === S.listType).sort((a, b) => a.name.localeCompare(b.name));
+      let last = '';
+      rows = list.map(f => { const L = f.name[0].toUpperCase(), hasLetter = L !== last; last = L;
+        return { hasLetter, letter: L, en: f.name, mr: f.name_marathi, district: f.district || '—', type: (TYPES[f.type] || TYPES.Hill).en, glyph: GLYPH[f.type] || GLYPH.Hill, onClick: () => this.select(f.id) }; });
+      typeChips = [['', 'All']].concat(Object.keys(TYPES).map(t => [t, TYPES[t].en.replace(' fort', '')])).map(([t, label]) => {
+        const on = S.listType === t;
+        return { label, n: t ? base.filter(f => f.type === t).length : base.length, bg: on ? 'var(--acc)' : 'transparent', fg: on ? 'var(--bg)' : 'var(--ink2)', border: on ? 'var(--acc)' : 'rgba(var(--lr),.18)', onClick: () => set({ listType: t }) };
+      });
+      listCount = list.length === forts.length ? `${forts.length}` : `${list.length} of ${forts.length}`;
+    }
+
+    return {
+      mapEl: this.buildMap(), mapRef: this.mapRef, searchRef: this.searchRef, panelRef: this.panelRef,
+      mrI, mrBtn: S.showMr ? { track: 'var(--acc)', knob: 14, dot: 'var(--bg)' } : { track: 'rgba(var(--lr),.18)', knob: 2, dot: 'var(--mut)' },
+      allBtn: S.showAll ? { track: 'var(--acc)', knob: 14, dot: 'var(--bg)' } : { track: 'rgba(var(--lr),.18)', knob: 2, dot: 'var(--mut)' },
+      toggleAll: () => { const v = !S.showAll; try { localStorage.setItem('gadvat:showAll', v ? '1' : '0'); } catch (e) {} set({ showAll: v }); },
+      isLight: S.theme === 'light', isDark: S.theme !== 'light',
+      toggleTheme: () => { const v = S.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('gadvat:theme', v); } catch (e) {} set({ theme: v }); },
+      toggleMr: () => { const v = !S.showMr; try { localStorage.setItem('gadvat:showMr', v ? '1' : '0'); } catch (e) {} set({ showMr: v }); },
+      fortsBtn: S.list ? { bg: 'var(--acc)', fg: 'var(--bg)' } : { bg: 'rgba(var(--lr),.08)', fg: 'var(--ink)' },
+      toggleList: () => set({ list: !S.list, open: false }),
+      goHome: () => { set({ list: false }); if (S.sel) this.closeSel(); },
+      searchStyle, searchBorder: S.open ? 'rgba(var(--lr),.45)' : 'rgba(var(--lr),.18)',
+      searchPh: S.showMr ? `Search ${forts.length || 267} forts · किल्ला शोधा` : `Search ${forts.length || 267} forts by name`,
+      q: S.q, hasQ: !!S.q,
+      onQ: e => set({ q: e.target.value, open: true, act: 0 }),
+      onFocusQ: e => { set({ open: true }); try { e.target.select(); } catch (_) {} },
+      onBlurQ: () => set({ open: false }),
+      onKeyQ: e => {
+        if (e.key === 'ArrowDown') { e.preventDefault(); set({ act: Math.min(res.length - 1, act + 1) }); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); set({ act: Math.max(0, act - 1) }); }
+        else if (e.key === 'Enter' && res[act]) { e.preventDefault(); this.select(res[act].id); }
+      },
+      clearQ: () => { set({ q: '', act: 0 }); this.searchEl && this.searchEl.focus(); },
+      showResults: S.open && !!S.q.trim(), results, noResults: S.open && !!S.q.trim() && !res.length,
+      openListFromSearch: e => { e.preventDefault(); set({ list: true, listQ: '', open: false }); },
+      hasSel: !!selF, s, panelStyle, closeSel: this.closeSel,
+      listOpen: S.list, closeList: () => set({ list: false }), stop: e => e.stopPropagation(),
+      listQ: S.listQ, onListQ: e => set({ listQ: e.target.value }), typeChips, rows, noRows: S.list && !rows.length, listCount,
+      listPad: mob ? '64px 0 0' : '76px 24px 24px', listCols: mob ? 'minmax(0,1.5fr) minmax(0,1fr)' : 'minmax(0,1.7fr) minmax(0,1fr) 110px', typeColD: mob ? 'none' : 'block'
+    };
+  }
+}
+</script>
+</body>
+</html>
